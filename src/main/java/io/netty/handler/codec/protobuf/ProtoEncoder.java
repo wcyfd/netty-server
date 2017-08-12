@@ -26,6 +26,7 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.util.List;
 
+import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageLite;
 
@@ -33,21 +34,24 @@ import com.google.protobuf.MessageLite;
  * Encodes the requested <a href="https://github.com/google/protobuf">Google
  * Protocol Buffers</a> {@link Message} and {@link MessageLite} into a
  * {@link ByteBuf}. A typical setup for TCP/IP would be:
+ * 
  * <pre>
  * {@link ChannelPipeline} pipeline = ...;
- *
+ * 
  * // Decoders
  * pipeline.addLast("frameDecoder",
  *                  new {@link LengthFieldBasedFrameDecoder}(1048576, 0, 4, 0, 4));
  * pipeline.addLast("protobufDecoder",
  *                  new {@link ProtobufDecoder}(MyMessage.getDefaultInstance()));
- *
+ * 
  * // Encoder
  * pipeline.addLast("frameEncoder", new {@link LengthFieldPrepender}(4));
- * pipeline.addLast("protobufEncoder", new {@link ProtobufEncoder}());
+ * pipeline.addLast("protobufEncoder", new {@link ProtoEncoder}());
  * </pre>
- * and then you can use a {@code MyMessage} instead of a {@link ByteBuf}
- * as a message:
+ * 
+ * and then you can use a {@code MyMessage} instead of a {@link ByteBuf} as a
+ * message:
+ * 
  * <pre>
  * void channelRead({@link ChannelHandlerContext} ctx, Object msg) {
  *     MyMessage req = (MyMessage) msg;
@@ -58,16 +62,18 @@ import com.google.protobuf.MessageLite;
  * </pre>
  */
 @Sharable
-public class ProtobufEncoder extends MessageToMessageEncoder<MessageLite.Builder> {
+public class ProtoEncoder extends MessageToMessageEncoder<GeneratedMessage> {
     @Override
-    protected void encode(ChannelHandlerContext ctx, MessageLite.Builder msg, List<Object> out)
-            throws Exception {
-        if (msg instanceof MessageLite) {
-            out.add(wrappedBuffer(((MessageLite) msg).toByteArray()));
-            return;
-        }
-        if (msg instanceof MessageLite.Builder) {
-            out.add(wrappedBuffer(((MessageLite.Builder) msg).build().toByteArray()));
-        }
+    protected void encode(ChannelHandlerContext ctx, GeneratedMessage msg, List<Object> out) throws Exception {
+        // if (msg instanceof MessageLite) {
+        // out.add(wrappedBuffer(((MessageLite) msg).toByteArray()));
+        // return;
+        // }
+        // if (msg instanceof MessageLite.Builder) {
+        // out.add(wrappedBuffer(((MessageLite.Builder)
+        // msg).build().toByteArray()));
+        // }
+        //
+        out.add(wrappedBuffer(msg.toByteArray()));
     }
 }
