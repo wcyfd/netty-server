@@ -1,0 +1,75 @@
+package com.randioo.mahjong_public_server.protocol;
+import "Login.proto";
+import "Role.proto";
+import "Match.proto";
+import "Fight.proto";
+import "Settings.proto";
+import "Race.proto";
+import "Heart.proto";
+
+message SC{
+	optional HeartResponse HeartResponse = 1;//心跳回馈
+	optional SCHeart SCHeart = 2;//心跳主推
+
+	optional LoginCheckAccountResponse LoginCheckAccountResponse = 3;
+	optional LoginCreateRoleResponse LoginCreateRoleResponse = 4;
+	optional LoginGetRoleDataResponse LoginGetRoleDataResponse = 5;
+	optional SCLoginOtherSide SCLoginOtherSide = 6;
+
+	optional RoleRenameResponse RoleRenameResponse = 7;
+	optional RoleGetRoleDataResponse RoleGetRoleDataResponse = 8;
+
+	optional MatchCreateGameResponse MatchCreateGameResponse = 9;
+	optional MatchJoinGameResponse MatchJoinGameResponse = 10;
+	optional SCMatchJoinGame SCMatchJoinGame = 11;
+	optional SCMatchMineInfo SCMatchMineInfo = 12;
+	optional SCMatchCreateGame SCMatchCreateGame = 13;
+
+	optional SCFightNoticeReady SCFightNoticeReady = 14;
+	optional FightReadyResponse FightReadyResponse = 15;//准备(只有好友对战用)
+	optional SCFightReady SCFightReady = 16;//某玩家进行准备
+	optional SCFightStart SCFightStart = 17;//游戏开始
+	optional FightExitGameResponse FightExitGameResponse = 18;//游戏退出
+	optional SCFightExitGame SCFightExitGame = 19;//某玩家游戏退出
+	optional FightApplyExitGameResponse FightApplyExitGameResponse = 20;
+	optional SCFightApplyExitGame SCFightApplyExitGame = 21;//某玩家申请游戏退出
+	optional FightAgreeExitGameResponse FightAgreeExitGameResponse = 22;//同意游戏退出
+	optional SCFightClearRoomId SCFightClearRoomId = 23;//清除房间号
+	optional SCFightLoadResource SCFightLoadResource = 24;//游戏资源加载(用于匹配)
+	optional SCFightNoticeSendCard SCFightNoticeSendCard = 25;//通知出牌
+	optional FightSendCardResponse FightSendCardResponse = 26;
+	optional SCFightSendCard SCFightSendCard = 27;
+	optional SCFightRoundOver SCFightRoundOver = 28;
+	optional FightRecommandResponse FightRecommandResponse = 29;
+	optional SCFightGameOver SCFightGameOver = 30;
+	optional FightGetlastRoundResponse FightGetlastRoundResponse = 31;
+	optional SCFightTouchCard SCFightTouchCard = 32;//摸一张牌
+	optional SCFightNoticeChooseCardList SCFightNoticeChooseCardList = 33;//通知所有人的杠碰胡
+	optional FightPengResponse FightPengResponse = 34;
+	optional FightGangResponse FightGangResponse = 35;
+	optional FightHuResponse FightHuResponse = 36;
+	optional SCFightHu SCFightHu = 37;
+	optional FightGuoResponse FightGuoResponse = 38;
+	optional SCFightGuo SCFightGuo = 39;
+	optional SCFightCountdown SCFightCountdown = 40;
+	optional SCFightCardList SCFightCardList = 41;
+	optional SCFightPointSeat SCFightPointSeat = 42;
+	optional SCFightApplyExitResult SCFightApplyExitResult = 43;//申请退出的结果
+	optional SCFightDisconnect SCFightDisconnect = 44;//通知玩家断连
+	optional FightChiResponse FightChiResponse = 45;//吃的响应
+	optional SCFightScore SCFightScore = 46;//分数改变
+	optional SCFightChooseCardListOver SCFightChooseCardListOver = 47;//取消通知
+	optional FightQueryGameConfigResponse FightQueryGameConfigResponse = 48;//查询游戏配置
+	
+	optional SettingsResponse SettingsResponse = 49;//设置
+	optional SettingsShowResponse SettingsShowResponse = 50;//设置
+
+	optional RaceJoinRaceResponse RaceJoinRaceResponse = 51;
+	optional SCRaceJoinRace SCRaceJoinRace = 52;
+	optional RaceShowQueueResponse RaceShowQueueResponse = 53;
+	optional SCRaceQueueChange SCRaceQueueChange = 54;
+
+	optional MatchCheckRoomResponse MatchCheckRoomResponse = 55;// 检查房间号
+
+	extensions 100 to 200;
+} // 55

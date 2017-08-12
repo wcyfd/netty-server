@@ -1,0 +1,44 @@
+package com.randioo.mahjong_public_server.protocol;
+import "Login.proto";
+import "Role.proto";
+import "Match.proto";
+import "Fight.proto";
+import "Settings.proto";
+import "Race.proto";
+import "Heart.proto";
+
+message CS{
+	optional HeartRequest HeartRequest = 1;
+	
+	optional LoginCheckAccountRequest LoginCheckAccountRequest = 2;
+	optional LoginCreateRoleRequest LoginCreateRoleRequest = 3;
+	optional LoginGetRoleDataRequest LoginGetRoleDataRequest = 4;
+
+	optional RoleRenameRequest RoleRenameRequest = 5;
+	optional RoleGetRoleDataRequest RoleGetRoleDataRequest = 6;
+
+	optional MatchCreateGameRequest MatchCreateGameRequest = 7;
+	optional MatchJoinGameRequest MatchJoinGameRequest = 8;
+	optional MatchCheckRoomRequest MatchCheckRoomRequest = 9;
+
+	optional FightReadyRequest FightReadyRequest = 10;
+	optional FightExitGameRequest FightExitGameRequest = 11;
+	optional FightApplyExitGameRequest FightApplyExitGameRequest = 12;//申请退出
+	optional FightAgreeExitGameRequest FightAgreeExitGameRequest = 13;
+	optional FightSendCardRequest FightSendCardRequest = 14;
+	optional FightRecommandRequest FightRecommandRequest = 15;
+	optional FightGetlastRoundRequest FightGetlastRoundRequest = 16;
+	optional FightPengRequest FightPengRequest = 17;
+	optional FightGangRequest FightGangRequest = 18;
+	optional FightHuRequest FightHuRequest = 19;
+	optional FightGuoRequest FightGuoRequest = 20;
+	optional FightChiRequest FightChiRequest = 21;//吃的请求
+	optional FightQueryGameConfigRequest FightQueryGameConfigRequest = 22;//查询游戏配置
+
+	optional SettingsRequest SettingsRequest = 23;
+	optional SettingsShowRequest SettingsShowRequest = 24;
+
+	optional RaceJoinRaceRequest RaceJoinRaceRequest = 25;
+	optional RaceShowQueueRequest RaceShowQueueRequest = 26;
+
+} // 26
