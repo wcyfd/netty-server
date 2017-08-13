@@ -65,10 +65,10 @@ import com.google.protobuf.MessageLite;
 public class ProtoEncoder extends MessageToMessageEncoder<GeneratedMessage> {
     @Override
     protected void encode(ChannelHandlerContext ctx, GeneratedMessage msg, List<Object> out) throws Exception {
-        // if (msg instanceof MessageLite) {
-        // out.add(wrappedBuffer(((MessageLite) msg).toByteArray()));
-        // return;
-        // }
+//         if (msg instanceof MessageLite) {
+//         out.add(wrappedBuffer(((MessageLite) msg).toByteArray()));
+//         return;
+//         }
         // if (msg instanceof MessageLite.Builder) {
         // out.add(wrappedBuffer(((MessageLite.Builder)
         // msg).build().toByteArray()));
