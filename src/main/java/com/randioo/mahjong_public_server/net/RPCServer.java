@@ -8,7 +8,13 @@ import com.google.protobuf.GeneratedMessage;
  *
  */
 public abstract class RPCServer {
+
+    protected final RPCServer rpcServer;
     protected RPCListener rpcListener = new DefaultRPCListener();
+
+    public RPCServer() {
+        this.rpcServer = this;
+    }
 
     public void listen(RPCListener rpcListener) {
         this.rpcListener = rpcListener;
@@ -20,6 +26,12 @@ public abstract class RPCServer {
         this.rpcHandler = handler;
     }
 
+    protected RPCHeartTimeoutHandler rpcHeartTimeoutHandler;
+
+    public void setRpcHeartHandler(RPCHeartTimeoutHandler rpcHeartHandler) {
+        this.rpcHeartTimeoutHandler = rpcHeartHandler;
+    }
+
     protected GeneratedMessage sc = null;
     protected GeneratedMessage cs = null;
 
@@ -29,6 +41,7 @@ public abstract class RPCServer {
 
     protected int idleTime;
     protected int responseTime;
+    protected boolean heartSwitch;
 
     /** 端口号 */
     protected int port;
@@ -42,17 +55,43 @@ public abstract class RPCServer {
 
     protected abstract void fireStart();
 
-    public void addHeart(GeneratedMessage scHeart, GeneratedMessage heartRequest, GeneratedMessage heartResponse,
-            int idleTime, int responseTime) {
+    /**
+     * 设置心跳协议
+     * 
+     * @param scHeart
+     * @param heartRequest
+     * @param heartResponse
+     * @author wcy 2017年8月14日
+     */
+    public void setHeartProtocol(GeneratedMessage scHeart, GeneratedMessage heartRequest, GeneratedMessage heartResponse) {
         this.scHeart = scHeart;
         this.heartRequest = heartRequest;
         this.heartResponse = heartResponse;
+    }
+
+    public void setHeartParam(int idleTime, int responseTime) {
         this.idleTime = idleTime;
         this.responseTime = responseTime;
     }
 
+    /**
+     * 开启心跳
+     * 
+     * @param heart
+     * @author wcy 2017年8月14日
+     */
+    public void startHeartSwitch(boolean heart) {
+        this.heartSwitch = heart;
+    }
+
     public void start(int port) {
         this.port = port;
+        if (heartSwitch) {
+            if (rpcHeartTimeoutHandler == null) {
+                throw new RuntimeException("not set heartHandler");
+            }
+        }
+
         // 初始化
         this.init();
 

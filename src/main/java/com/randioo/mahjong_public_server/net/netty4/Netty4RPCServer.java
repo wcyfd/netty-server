@@ -34,6 +34,7 @@ public class Netty4RPCServer extends RPCServer {
     private EventLoopGroup boss = null;
     private EventLoopGroup group = null;
     private Channel channel = null;
+    
 
     @Override
     protected void init() {
@@ -46,7 +47,7 @@ public class Netty4RPCServer extends RPCServer {
             protected void initChannel(SocketChannel ch) throws Exception {
                 // pipeline管理channel中的Handler，在channel队列中添加一个handler来处理业务
                 ch.pipeline().addLast(new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS));
-
+                
                 ch.pipeline().addLast(new ProtobufVarint32FrameDecoder());// 解码(处理半包)
                 ch.pipeline().addLast(new ProtobufDecoder(cs));
                 ch.pipeline().addLast(new ProtobufVarint32LengthFieldPrepender());// 加长度

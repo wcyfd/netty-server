@@ -1,10 +1,8 @@
 package com.randioo.mahjong_public_server.net.mina2;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Map;
 import java.util.concurrent.Executors;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
@@ -13,19 +11,14 @@ import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.filter.keepalive.KeepAliveFilter;
+import org.apache.mina.filter.keepalive.KeepAliveMessageFactory;
+import org.apache.mina.filter.keepalive.KeepAliveRequestTimeoutHandler;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
-import com.google.protobuf.GeneratedMessage;
-import com.google.protobuf.Message;
-import com.google.protobuf.Message.Builder;
-import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.randioo.mahjong_public_server.net.RPCChannel;
 import com.randioo.mahjong_public_server.net.RPCServer;
-import com.randioo.mahjong_public_server.protocol.ClientMessage.CS;
-import com.randioo.randioo_server_base.error.ActionSupportFakeException;
-import com.randioo.randioo_server_base.navigation.Navigation;
 import com.randioo.randioo_server_base.protocol.protobuf.ProtoCodecFactory;
-import com.randioo.randioo_server_base.template.IActionSupport;
 
 public class Mina2RPCServer extends RPCServer {
     private NioSocketAcceptor ioAcceptor;
@@ -44,16 +37,45 @@ public class Mina2RPCServer extends RPCServer {
         DefaultIoFilterChainBuilder chain = ioAcceptor.getFilterChain();
 
         chain.addLast("codec", new ProtocolCodecFilter(new ProtoCodecFactory(cs, null)));
-        // if (heartFilter != null)
-        // chain.addLast("keepalive", heartFilter);
+
+        if (heartSwitch) {
+            chain.addLast("keepalive", new KeepAliveFilter(new KeepAliveMessageFactory() {
+
+                @Override
+                public Object getRequest(IoSession arg0) {
+                    return heartRequest;
+                }
+
+                @Override
+                public Object getResponse(IoSession arg0, Object arg1) {
+                    return heartResponse;
+                }
+
+                @Override
+                public boolean isRequest(IoSession arg0, Object arg1) {
+                    boolean isRequest = heartRequest.toString().equals(arg1.toString());
+                    return isRequest;
+                }
+
+                @Override
+                public boolean isResponse(IoSession arg0, Object arg1) {
+                    boolean isResponse = heartResponse.toString().equals(arg1.toString());
+                    return isResponse;
+                }
+
+            }, IdleStatus.READER_IDLE, new KeepAliveRequestTimeoutHandler() {
+
+                @Override
+                public void keepAliveRequestTimedOut(KeepAliveFilter arg0, IoSession arg1) throws Exception {
+                    Mina2Session session = createSession(arg1);
+                    rpcHeartTimeoutHandler.timeout(rpcServer, session);
+                }
+            }, idleTime, responseTime));
+        }
 
         chain.addLast("threadpool", new ExecutorFilter(Executors.newCachedThreadPool()));
 
         ioAcceptor.setHandler(new IoHandler() {
-
-            private Mina2Session createSession(IoSession session) {
-                return new Mina2Session(session);
-            }
 
             @Override
             public void sessionCreated(IoSession session) throws Exception {
@@ -92,6 +114,17 @@ public class Mina2RPCServer extends RPCServer {
             }
 
         });
+    }
+
+    /**
+     * 创建session
+     * 
+     * @param session
+     * @return
+     * @author wcy 2017年8月14日
+     */
+    private Mina2Session createSession(IoSession session) {
+        return new Mina2Session(session);
     }
 
     @Override
